@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import './Login.css';
+import './Signup';
 import babyImage from '../Assets/babyImage.jpg';
 
 const Login = () => {
@@ -62,8 +63,10 @@ const Login = () => {
                 required
               />
             </div>
-
             <button type="submit" className="login-button">Start</button>
+            <div className="newuser">
+              New user? <a href='/signup'>Signup</a>
+            </div>
           </form>
         </div>
       </div>
