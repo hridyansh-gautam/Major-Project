@@ -1,0 +1,76 @@
+.signup-container {
+    max-width: 800px;
+    margin: auto;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    background-color: #f9f9f9;
+  }
+  
+  h2 {
+    text-align: center;
+  }
+  
+  form {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  label {
+    margin-top: 10px;
+    font-weight: bold;
+  }
+  
+  input {
+    padding: 8px;
+    margin: 5px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+  
+  .password-strength {
+    font-weight: bold;
+    padding: 5px;
+  }
+  
+  .password-strength.score-0 {
+    color: red;
+  }
+  .password-strength.score-1 {
+    color: orange;
+  }
+  .password-strength.score-2 {
+    color: yellow;
+  }
+  .password-strength.score-3 {
+    color: green;
+  }
+  .password-strength.score-4 {
+    color: darkgreen;
+  }
+  
+  .breach-info {
+    color: red;
+    font-size: 0.9em;
+  }
+  
+  .error-message {
+    color: red;
+    font-weight: bold;
+  }
+  
+  button {
+    margin-top: 15px;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    background-color: #007bff;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+  }
+  
+  button:hover {
+    background-color: #0056b3;
+  }
+  
