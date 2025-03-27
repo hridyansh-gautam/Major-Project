@@ -2,7 +2,8 @@ import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import "./Signup.css";
-
+import PhoneInput from "react-phone-input-2";
+import "react-phone-input-2/lib/style.css";
 const Signup = () => {
   const navigate = useNavigate();
 
@@ -11,7 +12,7 @@ const Signup = () => {
     username: "",
     password: "",
     confirmPassword: "",
-    userGroup: "Data Entry Staff",
+    userGroup: "",
     facilities: [],
     facilityGroup: "",
     lastName: "",
@@ -19,34 +20,24 @@ const Signup = () => {
     middleName: "",
     address: "",
     phone: "",
-    phone2: "",
     email: "",
-    county: "",
+    country: "",
+    pin: "",
     birthDate: "",
-    language: "",
     race: "",
     gender: "",
     title: "",
     education: "",
     ethnicity: "",
-    deceased: false,
     changePasswordNextLogin: false,
   });
 
   const [passwordStrength, setPasswordStrength] = useState("Weak");
   const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   // Facility Options
-  const facilityOptions = [
-    "Alton Mem Hospital",
-    "Creekside Hospital",
-    "Green River Medical",
-    "JJA-Alton Mem Hospital",
-    "Logan Regional Hospital",
-    "Mountain View Medical Center",
-    "UNKNOWN",
-    "Z HT35 Conv.",
-  ];
+  const facilityOptions = ["KMC Hospital Attavar", "KMC Hospital Mangalore"];
 
   // Handle Input Change
   const handleChange = (e) => {
@@ -64,26 +55,50 @@ const Signup = () => {
 
     // Check password strength
     if (name === "password") {
-      const strength = value.length > 8 ? "Strong" : value.length > 5 ? "Medium" : "Weak";
+      const strength =
+        value.length > 8 ? "Strong" : value.length > 5 ? "Medium" : "Weak";
       setPasswordStrength(strength);
     }
   };
 
+    // Handle Phone Number Change
+    const handlePhoneChange = (value, name) => {
+      setFormData((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    };
+
   // Handle Form Submission
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError("");
 
+    // Validate password match
     if (formData.password !== formData.confirmPassword) {
       setError("Passwords do not match!");
       return;
     }
 
+    // Prepare data for backend (exclude confirmPassword)
+    const { confirmPassword, ...dataToSend } = formData;
+
     try {
-      const response = await axios.post("http://localhost:5000/api/auth/register", formData);
+      setIsLoading(true);
+      const response = await axios.post(
+        "http://localhost:5000/api/auth/register",
+        dataToSend
+      );
       alert("Signup Successful! Please log in.");
       navigate("/");
     } catch (error) {
-      setError(error.response?.data?.message || "Signup failed");
+      setError(
+        error.response?.data?.message ||
+          error.response?.data?.error ||
+          "Signup failed. Please try again."
+      );
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -95,22 +110,47 @@ const Signup = () => {
         {/* Profile Section */}
         <fieldset className="profile-section">
           <legend>Profile</legend>
+          <div className="two">
+            <label>Username:</label>
+            <input
+              type="text"
+              name="username"
+              value={formData.username}
+              onChange={handleChange}
+              required
+            />
 
-          <label>Username:</label>
-          <input type="text" name="username" value={formData.username} onChange={handleChange} required />
-
-          <label>Password:</label>
-          <input type="password" name="password" value={formData.password} onChange={handleChange} required />
-          <span className={`password-strength ${passwordStrength.toLowerCase()}`}>{passwordStrength}</span>
-
+            <label>Password:</label>
+            <input
+              type="password"
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+              required
+            />
+            <span className={`password-strength ${passwordStrength.toLowerCase()}`}>
+              {passwordStrength}
+            </span>
+          </div>
           <label>Confirm Password:</label>
-          <input type="password" name="confirmPassword" value={formData.confirmPassword} onChange={handleChange} required />
+          <input
+            type="password"
+            name="confirmPassword"
+            value={formData.confirmPassword}
+            onChange={handleChange}
+            required
+          />
 
           <label>User Group:</label>
-          <select name="userGroup" value={formData.userGroup} onChange={handleChange}>
-            <option>Data Entry Staff</option>
-            <option>Admin</option>
-            <option>Doctor</option>
+          <select
+            name="userGroup"
+            value={formData.userGroup}
+            onChange={handleChange}
+          >
+            <option value="" disabled>Please select</option>
+            <option value="Doctor">Doctor</option>
+            <option value="Administrative staff">Administrative staff</option>
+            <option value="Support staff">Support Staff</option>
           </select>
         </fieldset>
 
@@ -132,54 +172,162 @@ const Signup = () => {
           ))}
 
           <label>Facility Group:</label>
-          <input type="text" name="facilityGroup" value={formData.facilityGroup} onChange={handleChange} />
+          <input
+            type="text"
+            name="facilityGroup"
+            value={formData.facilityGroup}
+            onChange={handleChange}
+          />
         </fieldset>
 
         {/* Demographics */}
         <fieldset className="demographics-section">
           <legend>Demographics</legend>
 
-          <label>Last Name:</label>
-          <input type="text" name="lastName" value={formData.lastName} onChange={handleChange} required />
+          <div className="two">
+            <label>First Name:</label>
+            <input
+              type="text"
+              name="firstName"
+              value={formData.firstName}
+              onChange={handleChange}
+              required
+            />
 
-          <label>First Name:</label>
-          <input type="text" name="firstName" value={formData.firstName} onChange={handleChange} required />
+            <label>Middle Name:</label>
+            <input
+              type="text"
+              name="middleName"
+              value={formData.middleName}
+              onChange={handleChange}
+            />
+          </div>
 
-          <label>Middle Name:</label>
-          <input type="text" name="middleName" value={formData.middleName} onChange={handleChange} />
+          <div className="two">
+            <label>Last Name:</label>
+            <input
+              type="text"
+              name="lastName"
+              value={formData.lastName}
+              onChange={handleChange}
+              required
+            />
 
-          <label>Birth Date:</label>
-          <input type="date" name="birthDate" value={formData.birthDate} onChange={handleChange} required />
+            <label>Birth Date:</label>
+            <input
+              type="date"
+              name="birthDate"
+              value={formData.birthDate}
+              onChange={handleChange}
+              required
+            />
+          </div>
+          
+          <div className="two">
+            <label>Gender:</label>
+            <select
+              name="gender"
+              value={formData.gender}
+              onChange={handleChange}
+            >
+              <option value="" disabled>Please select</option>
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+              <option value="Transgender">Transgender</option>
+              <option value="Rather not say">Rather not say</option>
+            </select>
 
-          <label>Gender:</label>
-          <select name="gender" value={formData.gender} onChange={handleChange}>
-            <option value="">-Blank-</option>
-            <option value="Male">Male</option>
-            <option value="Female">Female</option>
-          </select>
+            <label>Race:</label>
+            <input
+              type="text"
+              name="race"
+              value={formData.race}
+              onChange={handleChange}
+            />
 
-          <label>Race:</label>
-          <input type="text" name="race" value={formData.race} onChange={handleChange} />
+            <label>Ethnicity:</label>
+            <input
+              type="text"
+              name="ethnicity"
+              value={formData.ethnicity}
+              onChange={handleChange}
+            />
+          </div>
 
-          <label>Ethnicity:</label>
-          <input type="text" name="ethnicity" value={formData.ethnicity} onChange={handleChange} />
+          <div className="two">
+            <label>Address:</label>
+            <input
+              type="text"
+              name="address"
+              value={formData.address}
+              onChange={handleChange}
+              required
+            />
 
-          <label>Education:</label>
-          <select name="education" value={formData.education} onChange={handleChange}>
-            <option value="">[blank]</option>
-            <option>High School</option>
-            <option>Bachelor's</option>
-            <option>Master's</option>
-          </select>
+            <label>City/State ZIP:</label>
+            <input
+              type="number"
+              name="pin"
+              value={formData.pin}
+              onChange={handleChange}
+              required
+            />
+          </div>
 
-          <label>Phone:</label>
-          <input type="text" name="phone" value={formData.phone} onChange={handleChange} />
+          <div className="two">
+            <label>Country:</label>
+            <input
+              type="text"
+              name="country"
+              value={formData.country}
+              onChange={handleChange}
+              required
+            />
 
-          <label>Email:</label>
-          <input type="email" name="email" value={formData.email} onChange={handleChange} required />
+            <label>Education:</label>
+            <select
+              name="education"
+              value={formData.education}
+              onChange={handleChange}
+            >
+              <option value="" disabled>Please select</option>
+              <option>High School</option>
+              <option>Bachelor's</option>
+              <option>Master's</option>
+            </select>
+          </div>
 
+          <div className="two">
+            <div className="phoneinp">
+              <label>Phone:</label>
+              <PhoneInput
+                country={"in"}
+                value={formData.phone}
+                onChange={(value) => handlePhoneChange(value, "phone")}
+                inputProps={{ name: "phone", required: true }}
+              />
+            </div>
+            <label>Email:</label>
+            <input
+              type="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              required
+            />
+          </div>
           <label>
-            <input type="checkbox" name="changePasswordNextLogin" checked={formData.changePasswordNextLogin} onChange={(e) => setFormData({ ...formData, changePasswordNextLogin: e.target.checked })} />
+            <input
+              type="checkbox"
+              name="changePasswordNextLogin"
+              checked={formData.changePasswordNextLogin}
+              onChange={(e) =>
+                setFormData({
+                  ...formData,
+                  changePasswordNextLogin: e.target.checked,
+                })
+              }
+            />
             Require user to change password at next login
           </label>
         </fieldset>
@@ -187,8 +335,12 @@ const Signup = () => {
         {/* Buttons */}
         <div className="form-buttons">
           {error && <p className="error-message">{error}</p>}
-          <button type="submit">Save</button>
-          <button type="button" onClick={() => navigate("/")}>Cancel</button>
+          <button type="submit" disabled={isLoading}>
+            {isLoading ? "Saving..." : "Save"}
+          </button>
+          <button type="button" onClick={() => navigate("/")}>
+            Cancel
+          </button>
         </div>
       </form>
     </div>

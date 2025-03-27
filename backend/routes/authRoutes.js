@@ -1,66 +1,81 @@
 const express = require("express");
-const bcrypt = require("bcryptjs");
+const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 
 const router = express.Router();
 
-// Register
+// REGISTER ROUTE
 router.post("/register", async (req, res) => {
   try {
-    const { name, email, doctorId, password } = req.body;
-    const userExists = await User.findOne({ email });
+    const {
+      firstName, middleName, lastName, username, email, password,
+      userGroup, facilities, facilityGroup, phone, address, country,
+      birthDate, gender, race, ethnicity, education, changePasswordNextLogin, pin
+    } = req.body;
 
-    if (userExists) return res.status(400).json({ message: "User already exists" });
+    if (!firstName || !lastName || !username || !email || !password) {
+      return res.status(400).json({ message: "Missing required fields!" });
+    }
 
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
+    // Check if user already exists
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({ message: "Email already registered!" });
+    }
 
-    const user = await User.create({ name, email, doctorId, password: hashedPassword });
+    // Hash password before saving
+    const hashedPassword = await bcrypt.hash(password, 10);
 
-    res.status(201).json({ message: "User registered successfully", user });
+    // Create new user
+    const newUser = new User({
+      firstName, middleName, lastName, username, email, 
+      password: hashedPassword, userGroup, facilities, facilityGroup,
+      phone, address, country, pin, birthDate, gender, 
+      race, ethnicity, education, changePasswordNextLogin
+    });
+
+    await newUser.save();
+    res.status(201).json({ message: "User registered successfully!" });
+
   } catch (error) {
-    console.error("Registration Error:", error);
-    res.status(500).json({ message: "Server Error" });
+    console.error("Error in Register Route:", error);
+    res.status(500).json({ message: "Server error", error: error.message });
   }
 });
 
-// Login
+// LOGIN ROUTE
 router.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
+
+    if (!email || !password) {
+      return res.status(400).json({ message: "Both fields are required!" });
+    }
+
     const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(401).json({ message: "Invalid email or password!" });
+    }
 
-    if (!user) return res.status(400).json({ message: "Invalid credentials" });
-
+    // Compare password
     const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) return res.status(400).json({ message: "Invalid credentials" });
+    if (!isMatch) {
+      return res.status(401).json({ message: "Invalid email or password!" });
+    }
 
-    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: "1h" });
+    // Generate JWT Token
+    const token = jwt.sign(
+      { userId: user._id, email: user.email }, 
+      process.env.JWT_SECRET || "secretkey", 
+      { expiresIn: "1h" }
+    );
 
-    res.json({
-      token,
-      user: { id: user._id, name: user.name, email: user.email, doctorId: user.doctorId },
-    });
+    res.json({ message: "Login successful!", token });
+
   } catch (error) {
-    console.error("Login Error:", error);
-    res.status(500).json({ message: "Server Error" });
-  }
-});
-
-// Get User
-router.get("/user", async (req, res) => {
-  try {
-    const token = req.header("Authorization").replace("Bearer ", "");
-    if (!token) return res.status(401).json({ message: "Unauthorized" });
-
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const user = await User.findById(decoded.userId).select("-password");
-
-    res.json(user);
-  } catch (error) {
-    console.error("Fetch User Error:", error);
-    res.status(401).json({ message: "Invalid Token" });
+    console.error("Error in Login Route:", error);
+    res.status(500).json({ message: "Server error", error: error.message });
   }
 });
 

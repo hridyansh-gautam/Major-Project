@@ -12,7 +12,7 @@ body {
 /* Container */
 .container {
     display: flex;
-    width: 80%;
+    width: 90%;
     justify-content: space-between;
     align-items: center;
     position: relative;
@@ -51,9 +51,10 @@ body {
 /* Image Below Title */
 .banner-image {
     position: relative;
-    width: 250px;
+    width: 450px;
     height: auto;
     margin-top: 70px; /* Space below the title */
+    margin-right: 250px;
     border-radius: 10px;
 }
 
@@ -100,7 +101,7 @@ body {
 }
 
 .input-group input {
-    width: 100%;
+    width: 90%;
     padding: 8px;
     border: 1px solid #ccc;
     border-radius: 4px;
