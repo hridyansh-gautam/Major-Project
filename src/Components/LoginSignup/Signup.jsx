@@ -336,7 +336,7 @@ const Signup = () => {
         <div className="form-buttons">
           {error && <p className="error-message">{error}</p>}
           <button type="submit" disabled={isLoading}>
-            {isLoading ? "Saving..." : "Save"}
+            {isLoading ? "Saving..." : "Saved"}
           </button>
           <button type="button" onClick={() => navigate("/")}>
             Cancel
