@@ -4,6 +4,12 @@ import { useNavigate } from "react-router-dom";
 import "./Signup.css";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
+
+// const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
+const axiosInstance = axios.create({
+  baseURL: 'http://localhost:5000/api',
+});
+
 const Signup = () => {
   const navigate = useNavigate();
 
@@ -29,7 +35,7 @@ const Signup = () => {
     title: "",
     education: "",
     ethnicity: "",
-    changePasswordNextLogin: false,
+    changePasswordNextLogin: false
   });
 
   const [passwordStrength, setPasswordStrength] = useState("Weak");
@@ -61,13 +67,13 @@ const Signup = () => {
     }
   };
 
-    // Handle Phone Number Change
-    const handlePhoneChange = (value, name) => {
-      setFormData((prev) => ({
-        ...prev,
-        [name]: value,
-      }));
-    };
+  // Handle Phone Number Change
+  const handlePhoneChange = (value, name) => {
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
 
   // Handle Form Submission
   const handleSubmit = async (e) => {
@@ -85,10 +91,9 @@ const Signup = () => {
 
     try {
       setIsLoading(true);
-      const response = await axios.post(
-        "http://localhost:5000/api/auth/register",
-        dataToSend
-      );
+      const response= await axiosInstance.post("/auth/register", dataToSend);
+
+      console.log(response.data);
       alert("Signup Successful! Please log in.");
       navigate("/");
     } catch (error) {
@@ -146,11 +151,12 @@ const Signup = () => {
             name="userGroup"
             value={formData.userGroup}
             onChange={handleChange}
+            required
           >
             <option value="" disabled>Please select</option>
             <option value="Doctor">Doctor</option>
-            <option value="Administrative staff">Administrative staff</option>
-            <option value="Support staff">Support Staff</option>
+            <option value="Admin">Admin</option>
+            <option value="Data Entry Staff">Data Entry Staff</option>
           </select>
         </fieldset>
 
@@ -266,7 +272,7 @@ const Signup = () => {
 
             <label>City/State ZIP:</label>
             <input
-              type="number"
+              type="text"
               name="pin"
               value={formData.pin}
               onChange={handleChange}
@@ -336,7 +342,7 @@ const Signup = () => {
         <div className="form-buttons">
           {error && <p className="error-message">{error}</p>}
           <button type="submit" disabled={isLoading}>
-            {isLoading ? "Saving..." : "Saved"}
+            {isLoading ? "Saving..." : "Save"}
           </button>
           <button type="button" onClick={() => navigate("/")}>
             Cancel
