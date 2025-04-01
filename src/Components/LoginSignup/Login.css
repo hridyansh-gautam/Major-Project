@@ -1,6 +1,6 @@
 /* General Styles */
 body {
-    margin: 0;
+    margin: 10px;
     font-family: Arial, sans-serif;
     background-color: #fbe0cc; /* Soft peach background */
     display: flex;
