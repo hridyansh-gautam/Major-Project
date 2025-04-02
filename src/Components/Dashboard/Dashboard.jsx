@@ -1,11 +1,30 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import "./Dashboard.css";
 
 const Dashboard = () => {
-  const [activeFacility, setActiveFacility] = useState("Green River Regional");
-  const [fromDate, setFromDate] = useState("10/9/12");
-  const [toDate, setToDate] = useState("10/9/12");
+  const [activeFacility, setActiveFacility] = useState("KMC Hospital Mangalore");
+  const [fromDate, setFromDate] = useState("");
+  const [toDate, setToDate] = useState("");
+  const navigate = useNavigate();
   
+  const handleLogout = () => {
+    localStorage.removeItem("user");
+    localStorage.removeItem("token");
+    localStorage.removeItem("isAuthenticated");
+    navigate("/");
+  };
+
+  const resetDate = () => {
+    setFromDate("");
+    setToDate("");
+  }
+
+  const today = new Date().toISOString().split("T")[0];
+  const minDate = new Date();
+  minDate.setFullYear(minDate.getFullYear() - 17);
+  const minDateString = minDate.toISOString().split("T")[0];
+
   return (
     <div className="dashboard-container">
       {/* Top Navigation Bar */}
@@ -17,7 +36,6 @@ const Dashboard = () => {
         <div className="facility-section">
           <span>Facility:</span>
           <select value={activeFacility} onChange={(e) => setActiveFacility(e.target.value)}>
-            <option value="Green River Regional">Green River Regional</option>
             <option value="KMC Hospital Mangalore">KMC Hospital Mangalore</option>
             <option value="KMC Hospital Attavar">KMC Hospital Attavar</option>
           </select>
@@ -28,7 +46,7 @@ const Dashboard = () => {
           <button className="tool-button">Merge</button>
           <button className="tool-button">Delete</button>
           <button className="tool-button">Settings</button>
-          <button className="tool-button">Log Out</button>
+          <button className="tool-button" id="logout" onClick={handleLogout}> Log Out </button>
         </div>
       </div>
 
@@ -44,18 +62,18 @@ const Dashboard = () => {
           <div className="date-range">
             <span>DOB From:</span>
             <input 
-              type="text" 
+              type="date" min={minDateString} max={today} 
               value={fromDate} 
               onChange={(e) => setFromDate(e.target.value)} 
             />
             <span>To:</span>
             <input 
-              type="text" 
+              type="date" min={minDateString} max={today} 
               value={toDate} 
               onChange={(e) => setToDate(e.target.value)} 
             />
-            <button className="refresh-button">Refresh</button>
-            <button className="reset-button">Reset Date</button>
+            <button className="set-date-button">Filter</button>
+            <button className="reset-date-button" onClick={resetDate}>Reset Date</button>
           </div>
           <div className="advanced-filter">
             <label>
@@ -285,7 +303,8 @@ const Dashboard = () => {
               <div className="filter-group">
                 <label>Facility:</label>
                 <select className="filter-select">
-                  <option>Green River Regional</option>
+                <option value="KMC Hospital Mangalore">KMC Hospital Mangalore</option>
+                <option value="KMC Hospital Attavar">KMC Hospital Attavar</option>
                 </select>
               </div>
             </div>

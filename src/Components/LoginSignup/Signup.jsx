@@ -10,6 +10,13 @@ const axiosInstance = axios.create({
   baseURL: 'http://localhost:5000/api',
 });
 
+const minDate = new Date()
+const maxDate = new Date();
+minDate.setFullYear(minDate.getFullYear() - 65);
+maxDate.setFullYear(maxDate.getFullYear() - 21);
+const minDateString = minDate.toISOString().split("T")[0];
+const maxDateString = maxDate.toISOString().split("T")[0];
+
 const Signup = () => {
   const navigate = useNavigate();
 
@@ -223,6 +230,7 @@ const Signup = () => {
             <input
               type="date"
               name="birthDate"
+              min={minDateString} max={maxDateString}
               value={formData.birthDate}
               onChange={handleChange}
               required

@@ -117,7 +117,7 @@
   border: 1px solid #aaa;
 }
 
-.refresh-button, .reset-button {
+.set-date-button, .reset-date-button {
   font-size: 12px;
   padding: 2px 8px;
   background-color: #e0e0e0;
