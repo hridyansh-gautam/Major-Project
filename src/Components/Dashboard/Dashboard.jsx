@@ -1,64 +1,304 @@
-import React from "react";
+import React, { useState } from "react";
 import "./Dashboard.css";
 
 const Dashboard = () => {
+  const [activeFacility, setActiveFacility] = useState("Green River Regional");
+  const [fromDate, setFromDate] = useState("10/9/12");
+  const [toDate, setToDate] = useState("10/9/12");
+  
   return (
     <div className="dashboard-container">
-      {/* Top Section with Navigation */}
-      <div className="dashboard-header">
-        <button className="nav-button">File Cabinet & File Card</button>
-        <button className="nav-button">Facility Selector</button>
-        <button className="nav-button">Tool Bar</button>
+      {/* Top Navigation Bar */}
+      <div className="navigation-bar">
+        <div className="file-section">
+          <button className="nav-button active">All Folders</button>
+          <button className="nav-button">No Action</button>
+        </div>
+        <div className="facility-section">
+          <span>Facility:</span>
+          <select value={activeFacility} onChange={(e) => setActiveFacility(e.target.value)}>
+            <option value="Green River Regional">Green River Regional</option>
+            <option value="KMC Hospital Mangalore">KMC Hospital Mangalore</option>
+            <option value="KMC Hospital Attavar">KMC Hospital Attavar</option>
+          </select>
+        </div>
+        <div className="tool-section">
+          <button className="tool-button">Letters</button>
+          <button className="tool-button">Reports</button>
+          <button className="tool-button">Merge</button>
+          <button className="tool-button">Delete</button>
+          <button className="tool-button">Settings</button>
+          <button className="tool-button">Log Out</button>
+        </div>
       </div>
 
       {/* Main Content Area */}
-      <div className="dashboard-main">
-        {/* Left Sidebar */}
-        <div className="sidebar">
-          <h3>Hanson, James</h3>
-          <p>Medical ID: 1576826</p>
-          <p>DOB: 10/9/2012</p>
-          <p>Action Needed (9)</p>
+      <div className="main-content">
+        {/* Title Bar */}
+        <div className="title-bar">
+          <h3>All Data for {activeFacility} (15 of 15)</h3>
         </div>
 
-        {/* Work Area */}
-        <div className="work-area">
-          <h2>All Data for Green River Regional (15 of 15)</h2>
-          <table>
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Medical ID</th>
-                <th>Birth Date</th>
-                <th>Inpatient</th>
-                <th>OP Date</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>Montorsan, Emily</td>
-                <td>1576829</td>
-                <td>10/6/2012</td>
-                <td>Referred</td>
-                <td>10/9/2012</td>
-              </tr>
-              <tr>
-                <td>Douglas, Sally</td>
-                <td>1576830</td>
-                <td>10/8/2012</td>
-                <td>Inconclusive</td>
-                <td>10/9/2012</td>
-              </tr>
-            </tbody>
-          </table>
+        {/* Date Filter Section */}
+        <div className="date-filter">
+          <div className="date-range">
+            <span>DOB From:</span>
+            <input 
+              type="text" 
+              value={fromDate} 
+              onChange={(e) => setFromDate(e.target.value)} 
+            />
+            <span>To:</span>
+            <input 
+              type="text" 
+              value={toDate} 
+              onChange={(e) => setToDate(e.target.value)} 
+            />
+            <button className="refresh-button">Refresh</button>
+            <button className="reset-button">Reset Date</button>
+          </div>
+          <div className="advanced-filter">
+            <label>
+              <input type="checkbox" /> Milestones
+            </label>
+            <button className="advanced-button">Advanced Find</button>
+          </div>
         </div>
-      </div>
 
-      {/* Action Buttons */}
-      <div className="dashboard-footer">
-        <button className="action-button">Add Entry</button>
-        <button className="action-button">Delete Entry</button>
-        <button className="action-button">Save</button>
+        <div className="dashboard-content">
+          {/* Left Sidebar */}
+          <div className="patient-sidebar">
+            <div className="patient-info">
+              <h4>Hanson, James</h4>
+              <p>Medical ID: 1576826</p>
+              <p>DOB: 10/9/2012</p>
+              <p className="action-needed">Action Needed (9)</p>
+            </div>
+            
+            <div className="sidebar-menu">
+              <div className="sidebar-item">
+                <span className="icon">📋</span> Record Overview
+              </div>
+              <div className="sidebar-item">
+                <span className="icon">📊</span> Tracking Options
+                <div className="sub-item">➜ Demographics</div>
+                <div className="sub-item">➜ Screening</div>
+              </div>
+              <div className="sidebar-item">
+                <span className="icon">⚠️</span> Risk Indicators
+              </div>
+              <div className="sidebar-item">
+                <span className="icon">🔍</span> Diagnostics Manager
+              </div>
+              <div className="sidebar-item highlighted">
+                <span className="icon">📝</span> Hearing Disposition
+              </div>
+              <div className="sidebar-item">
+                <span className="icon">🔄</span> Classification
+              </div>
+              <div className="sidebar-item">
+                <span className="icon">🔔</span> EI Services
+              </div>
+              <div className="sidebar-item">
+                <span className="icon">✉️</span> Letters
+              </div>
+              <div className="sidebar-item">
+                <span className="icon">↔️</span> Transfer
+              </div>
+            </div>
+            
+            <div className="messages-section">
+              <h5>Messages:</h5>
+              <p className="message">CONFIRMED DOB: 10/9/12</p>
+              <p className="message">Milestone: 6M</p>
+            </div>
+          </div>
+
+          {/* Main Work Area */}
+          <div className="work-area">
+            <table className="data-table">
+              <thead>
+                <tr>
+                  <th>Baby Name</th>
+                  <th>Medical ID</th>
+                  <th>Birth Date</th>
+                  <th>Inpatient</th>
+                  <th>IP Date</th>
+                  <th>Outpatient</th>
+                  <th>OP Date</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Hanson, James</td>
+                  <td>1575826</td>
+                  <td>10/9/2012</td>
+                  <td>No Out Scrn-Eval</td>
+                  <td>10/9/2012</td>
+                  <td>No Out Scrn-Eval</td>
+                  <td>10/9/2012</td>
+                </tr>
+                <tr>
+                  <td>Montorsan, Emily</td>
+                  <td>1577691</td>
+                  <td>10/9/2012</td>
+                  <td>Hospitalized</td>
+                  <td>10/9/2012</td>
+                  <td>No Out Scrn-Eval</td>
+                  <td>10/9/2012</td>
+                </tr>
+                <tr>
+                  <td>Douglas, Sally</td>
+                  <td>1575852</td>
+                  <td>10/8/2012</td>
+                  <td>Referred</td>
+                  <td>10/9/2012</td>
+                  <td>Referred</td>
+                  <td>10/9/2012</td>
+                </tr>
+                <tr>
+                  <td>Clarke, Felicia</td>
+                  <td>1577691</td>
+                  <td>10/9/2012</td>
+                  <td>Hospitalized</td>
+                  <td>10/9/2012</td>
+                  <td>No Out Scrn-Eval</td>
+                  <td>10/9/2012</td>
+                </tr>
+                <tr>
+                  <td>Rose, Kevin</td>
+                  <td>1577348</td>
+                  <td>10/9/2012</td>
+                  <td>Referred</td>
+                  <td>10/9/2012</td>
+                  <td>Inconclusive</td>
+                  <td>10/9/2012</td>
+                </tr>
+                <tr>
+                  <td>Stevens, Rebecca</td>
+                  <td>1565724</td>
+                  <td>10/9/2012</td>
+                  <td>Inconclusive</td>
+                  <td>10/9/2012</td>
+                  <td>No Out Scrn-Eval</td>
+                  <td>10/9/2012</td>
+                </tr>
+                <tr>
+                  <td>Willard, Kevin</td>
+                  <td>1758632</td>
+                  <td>10/9/2012</td>
+                  <td>Hospitalized</td>
+                  <td>10/9/2012</td>
+                  <td>No Out Scrn-Eval</td>
+                  <td>10/9/2012</td>
+                </tr>
+                <tr>
+                  <td>Douglas, Cammie</td>
+                  <td>1874231</td>
+                  <td>12/7/2012</td>
+                  <td>Passed</td>
+                  <td>10/9/2013</td>
+                  <td>Passed</td>
+                  <td>10/9/2013</td>
+                </tr>
+                <tr>
+                  <td>Postlate, Cindy</td>
+                  <td>1574553</td>
+                  <td>10/7/2012</td>
+                  <td>Passed</td>
+                  <td>10/9/2012</td>
+                  <td>Passed</td>
+                  <td>10/9/2012</td>
+                </tr>
+                <tr>
+                  <td>Johnson, Emily</td>
+                  <td>1579724</td>
+                  <td>10/9/2012</td>
+                  <td>Inconclusive</td>
+                  <td>10/9/2012</td>
+                  <td>Passed</td>
+                  <td>10/9/2012</td>
+                </tr>
+                <tr>
+                  <td>Rose, Brittany</td>
+                  <td>1548726</td>
+                  <td>10/5/2012</td>
+                  <td>Inconclusive</td>
+                  <td>10/9/2012</td>
+                  <td>Passed</td>
+                  <td>10/9/2012</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        {/* Filter and Action Area */}
+        <div className="filter-action-area">
+          <div className="filter-controls">
+            <div className="filter-row">
+              <div className="filter-group">
+                <label>Status:</label>
+                <select className="filter-select">
+                  <option>Any Status</option>
+                </select>
+              </div>
+              <div className="filter-group">
+                <label>Type:</label>
+                <select className="filter-select">
+                  <option>PEOPLE</option>
+                </select>
+              </div>
+              <div className="filter-group">
+                <label>Right:</label>
+                <select className="filter-select">
+                  <option>Blank</option>
+                </select>
+              </div>
+              <div className="filter-group">
+                <label>Clinician:</label>
+                <select className="filter-select">
+                  <option>...</option>
+                </select>
+              </div>
+            </div>
+            <div className="filter-row">
+              <div className="filter-group">
+                <label>Date:</label>
+                <input type="text" value="10/9/2012" className="date-input" />
+                <select className="time-select">
+                  <option>0</option>
+                </select>
+              </div>
+              <div className="filter-group">
+                <label>Left:</label>
+                <select className="filter-select">
+                  <option>Blank</option>
+                </select>
+              </div>
+              <div className="filter-group">
+                <label>Source:</label>
+                <select className="filter-select">
+                  <option>Blank</option>
+                </select>
+              </div>
+              <div className="filter-group">
+                <label>Facility:</label>
+                <select className="filter-select">
+                  <option>Green River Regional</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          <div className="action-buttons">
+            <button className="action-button">Find Similar</button>
+            <button className="action-button">Create Data</button>
+            <button className="action-button">View Data</button>
+            <button className="action-button">Double-Click Action: Demographics</button>
+            <label><input type="checkbox" /> Combine</label>
+            <button className="save-button">Save</button>
+          </div>
+        </div>
       </div>
     </div>
   );
