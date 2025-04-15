@@ -27,6 +27,7 @@ const Dashboard = () => {
 
   return (
     <div className="dashboard-container">
+      <title>Dashboard</title>
       {/* Top Navigation Bar */}
       <div className="navigation-bar">
         <div className="file-section">
@@ -283,7 +284,8 @@ const Dashboard = () => {
             <div className="filter-row">
               <div className="filter-group">
                 <label>Date:</label>
-                <input type="text" value="10/9/2012" className="date-input" />
+                <input type="date" min={minDateString} max={today} 
+               value={fromDate} className="date-input" />
                 <select className="time-select">
                   <option>0</option>
                 </select>
@@ -313,7 +315,9 @@ const Dashboard = () => {
             <button className="action-button">Find Similar</button>
             <button className="action-button">Create Data</button>
             <button className="action-button">View Data</button>
-            <button className="action-button">Double-Click Action: Demographics</button>
+            <button className="action-button"
+            onClick={() => navigate("/facilities/new")}>
+              Add facility</button>
             <label><input type="checkbox" /> Combine</label>
             <button className="save-button">Save</button>
           </div>

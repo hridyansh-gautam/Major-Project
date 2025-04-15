@@ -2,7 +2,8 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Login from "./Components/LoginSignup/Login";
 import Signup from "./Components/LoginSignup/Signup";
 import Dashboard from "./Components/Dashboard/Dashboard";
-import ProtectedRoute from "./Components/ProtectedRoute";
+import AddFacilities from "./Components/Facilities/AddFacilities";
+// import ProtectedRoute from "./Components/ProtectedRoute";
 
 const App = () => {
   return (
@@ -11,6 +12,7 @@ const App = () => {
         <Route path="/" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/dashboard" element={<Dashboard />}/>
+        <Route path="/facilities/new" element={<AddFacilities />} />
       </Routes>
     </BrowserRouter>
   );
