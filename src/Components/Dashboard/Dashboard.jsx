@@ -1,8 +1,13 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from 'axios';
 import "./Dashboard.css";
 
 const Dashboard = () => {
+  const [facilities, setFacilities] = useState([]);
+  const [selectedFacility, setSelectedFacility] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
   const [activeFacility, setActiveFacility] = useState("KMC Hospital Mangalore");
   const [fromDate, setFromDate] = useState("");
   const [toDate, setToDate] = useState("");
@@ -25,6 +30,42 @@ const Dashboard = () => {
   minDate.setFullYear(minDate.getFullYear() - 17);
   const minDateString = minDate.toISOString().split("T")[0];
 
+
+  useEffect(() => {
+    const fetchFacilities = async () => {
+      try {
+        setLoading(true);
+        const response = await axios.get('/api/facilities');
+        setFacilities(response.data.facilities || []);
+        
+        // Set default selection if facilities exist
+        if (response.data.facilities?.length > 0) {
+          setSelectedFacility(response.data.facilities[0]._id);
+        }
+      } catch (err) {
+        console.error('Error fetching facilities:', err);
+        setError('Failed to load facilities. Please try again later.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchFacilities();
+  }, []);
+
+  const handleFacilityChange = (e) => {
+    setSelectedFacility(e.target.value);
+  };
+
+  if (loading) {
+    return <div className="loading">Loading facilities...</div>;
+  }
+
+  if (error) {
+    return <div className="error">{error}</div>;
+  }
+
+
   return (
     <div className="dashboard-container">
       <title>Dashboard</title>
@@ -34,11 +75,19 @@ const Dashboard = () => {
           <button className="nav-button active">All Folders</button>
           <button className="nav-button">No Action</button>
         </div>
-        <div className="facility-section">
-          <span>Facility:</span>
-          <select value={activeFacility} onChange={(e) => setActiveFacility(e.target.value)}>
-            <option value="KMC Hospital Mangalore">KMC Hospital Mangalore</option>
-            <option value="KMC Hospital Attavar">KMC Hospital Attavar</option>
+        <div className="facility-selection">
+          <label htmlFor="facility-select">Select Facility:</label>
+          <select
+            id="facility-select"
+            value={selectedFacility}
+            onChange={handleFacilityChange}
+            disabled={facilities.length === 0}
+          >
+            {facilities.map(facility => (
+              <option key={facility._id} value={facility._id}>
+                {facility.name} ({facility.code})
+              </option>
+            ))}
           </select>
         </div>
         <div className="tool-section">
@@ -303,10 +352,18 @@ const Dashboard = () => {
                 </select>
               </div>
               <div className="filter-group">
-                <label>Facility:</label>
-                <select className="filter-select">
-                <option value="KMC Hospital Mangalore">KMC Hospital Mangalore</option>
-                <option value="KMC Hospital Attavar">KMC Hospital Attavar</option>
+                <label htmlFor="facility-select">Select Facility:</label>
+                <select
+                  id="facility-select"
+                  value={selectedFacility}
+                  onChange={handleFacilityChange}
+                  disabled={facilities.length === 0}
+                >
+                  {facilities.map(facility => (
+                    <option key={facility._id} value={facility._id}>
+                      {facility.name} ({facility.code})
+                    </option>
+                  ))}
                 </select>
               </div>
             </div>

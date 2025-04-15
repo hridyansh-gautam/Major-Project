@@ -110,6 +110,68 @@ html, body {
     display: block;
   }
 
+  /* Facility Section Styles */
+.facility-section {
+  margin-bottom: 20px;
+  max-width: 100%;
+}
+
+.facility-access-container {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.facility-checkboxes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px 30px; /* 15px vertical, 30px horizontal */
+}
+
+.facility-option {
+  display: flex;
+  align-items: center;
+  min-width: 200px;
+}
+
+.facility-option input[type="checkbox"] {
+  margin-right: 8px;
+}
+
+/* Facility Group Container */
+.facility-group-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.facility-group-container label {
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.facility-group-input {
+  padding: 6px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  min-width: 200px;
+}
+
+/* Loading and Error States */
+.loading-facilities, .no-facilities {
+  padding: 10px;
+}
+
+.loading-facilities {
+  color: #666;
+  font-style: italic;
+}
+
+.no-facilities {
+  color: #e74c3c;
+}
+
   .phoneinp{
     margin-top: 5px;
     display: flex;

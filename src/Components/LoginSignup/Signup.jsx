@@ -1,16 +1,15 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import "./Signup.css";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
 
-// const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
 const axiosInstance = axios.create({
   baseURL: 'http://localhost:5000/api',
 });
 
-const minDate = new Date()
+const minDate = new Date();
 const maxDate = new Date();
 minDate.setFullYear(minDate.getFullYear() - 65);
 maxDate.setFullYear(maxDate.getFullYear() - 21);
@@ -45,12 +44,29 @@ const Signup = () => {
     changePasswordNextLogin: false
   });
 
+  const [facilityOptions, setFacilityOptions] = useState([]);
   const [passwordStrength, setPasswordStrength] = useState("Weak");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [facilitiesLoading, setFacilitiesLoading] = useState(true);
 
-  // Facility Options
-  const facilityOptions = ["KMC Hospital Attavar", "KMC Hospital Mangalore"];
+  // Fetch facilities from backend on component mount
+  useEffect(() => {
+    const fetchFacilities = async () => {
+      try {
+        setFacilitiesLoading(true);
+        const response = await axiosInstance.get("/facilities");
+        setFacilityOptions(response.data.facilities || []);
+      } catch (err) {
+        console.error("Failed to fetch facilities:", err);
+        setError("Failed to load facility options. Please refresh the page.");
+      } finally {
+        setFacilitiesLoading(false);
+      }
+    };
+
+    fetchFacilities();
+  }, []);
 
   // Handle Input Change
   const handleChange = (e) => {
@@ -98,8 +114,7 @@ const Signup = () => {
 
     try {
       setIsLoading(true);
-      const response= await axiosInstance.post("/auth/register", dataToSend);
-
+      const response = await axiosInstance.post("/auth/register", dataToSend);
       console.log(response.data);
       alert("Signup Successful! Please log in.");
       navigate("/");
@@ -120,7 +135,7 @@ const Signup = () => {
       <h2>Signup</h2>
 
       <form onSubmit={handleSubmit}>
-        {/* Profile Section */}
+        {/* Profile Section (unchanged) */}
         <fieldset className="profile-section">
           <legend>Profile</legend>
           <div className="two">
@@ -169,30 +184,48 @@ const Signup = () => {
         </fieldset>
 
         {/* Facility Access */}
-        <fieldset className="facility-section">
-          <legend>Facility Access</legend>
-
-          {facilityOptions.map((facility, index) => (
-            <label key={index}>
-              <input
-                type="checkbox"
-                name="facilities"
-                value={facility}
-                checked={formData.facilities.includes(facility)}
-                onChange={handleChange}
-              />
-              {facility}
+{/* Facility Access */}
+<fieldset className="facility-section">
+  <legend>Facility Access</legend>
+  
+  {facilitiesLoading ? (
+    <div className="loading-facilities">Loading facilities...</div>
+  ) : facilityOptions.length === 0 ? (
+    <div className="no-facilities">No facilities available</div>
+  ) : (
+    <div className="facility-access-container">
+      <div className="facility-checkboxes">
+        {facilityOptions.map((facility) => (
+          <div key={facility._id} className="facility-option">
+            <input
+              type="checkbox"
+              id={`facility-${facility._id}`}
+              name="facilities"
+              value={facility._id}
+              checked={formData.facilities.includes(facility._id)}
+              onChange={handleChange}
+            />
+            <label htmlFor={`facility-${facility._id}`}>
+              {facility.name} ({facility.code})
             </label>
-          ))}
-
-          <label>Facility Group:</label>
-          <input
-            type="text"
-            name="facilityGroup"
-            value={formData.facilityGroup}
-            onChange={handleChange}
-          />
-        </fieldset>
+          </div>
+        ))}
+      </div>
+      
+      {/* Facility Group on new line */}
+      <div className="facility-group-container">
+        <label>Facility Group:</label>
+        <input
+          type="text"
+          name="facilityGroup"
+          value={formData.facilityGroup}
+          onChange={handleChange}
+          className="facility-group-input"
+        />
+      </div>
+    </div>
+  )}
+</fieldset>
 
         {/* Demographics */}
         <fieldset className="demographics-section">
