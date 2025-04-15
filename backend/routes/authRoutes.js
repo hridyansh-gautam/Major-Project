@@ -2,8 +2,52 @@ const express = require("express");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
-
 const router = express.Router();
+
+router.get('/verify-token', async (req, res) => {
+  try {
+    const token = req.headers.authorization?.split(' ')[1];
+    
+    if (!token) {
+      return res.status(401).json({ 
+        valid: false, 
+        message: 'No token provided' 
+      });
+    }
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your-secret-key');
+    const user = await User.findById(decoded.userId);
+    
+    if (!user) {
+      return res.status(401).json({ 
+        valid: false, 
+        message: 'User not found' 
+      });
+    }
+
+    res.json({ 
+      valid: true,
+      user: {
+        id: user._id,
+        email: user.email
+      }
+    });
+  } catch (err) {
+    console.error('Token verification error:', err);
+    
+    if (err instanceof jwt.JsonWebTokenError) {
+      return res.status(401).json({ 
+        valid: false, 
+        message: 'Invalid token' 
+      });
+    }
+    
+    res.status(500).json({ 
+      valid: false, 
+      message: 'Server error during verification' 
+    });
+  }
+});
 
 // Register
 router.post("/register", async (req, res) => {
@@ -166,7 +210,6 @@ router.post("/forgot-password", async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
     
-    // In a real application, you would:
     // 1. Generate a password reset token
     // 2. Save it to the user record with an expiration
     // 3. Send an email with a reset link
