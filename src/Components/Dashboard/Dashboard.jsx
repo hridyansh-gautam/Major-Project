@@ -314,10 +314,10 @@ const Dashboard = () => {
           <div className="action-buttons">
             <button className="action-button">Find Similar</button>
             <button className="action-button">Create Data</button>
-            <button className="action-button">View Data</button>
             <button className="action-button"
-            onClick={() => navigate("/facilities/new")}>
-              Add facility</button>
+            onClick={() => navigate("/facilities")}> View Facilites </button>
+            <button className="action-button"
+            onClick={() => navigate("/facilities/new")}> Add facility </button>
             <label><input type="checkbox" /> Combine</label>
             <button className="save-button">Save</button>
           </div>

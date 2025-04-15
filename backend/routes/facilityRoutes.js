@@ -51,4 +51,49 @@ router.post('/', async (req, res) => {
   }
 });
 
+// Get all facilities
+router.get('/', async (req, res) => {
+  try {
+    const facilities = await Facility.find().sort({ createdAt: -1 });
+    res.json({
+      success: true,
+      count: facilities.length,
+      facilities
+    });
+  } catch (error) {
+    console.error('Error fetching facilities:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Server error',
+      error: error.message
+    });
+  }
+});
+
+// Delete a facility
+router.delete('/:id', async (req, res) => {
+  try {
+    const facility = await Facility.findByIdAndDelete(req.params.id);
+    
+    if (!facility) {
+      return res.status(404).json({
+        success: false,
+        message: 'Facility not found'
+      });
+    }
+    
+    res.json({
+      success: true,
+      message: 'Facility deleted successfully'
+    });
+  } catch (error) {
+    console.error('Error deleting facility:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Server error',
+      error: error.message
+    });
+  }
+});
+
 module.exports = router;
